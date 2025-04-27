@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Dependency Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body { 
+          font-family: Arial, sans-serif; 
+          background-color: #f7f7f7;
+          margin: 0;
+          padding: 0;
+        }
+        .container {
+          max-width: 700px;
+          margin: 40px auto;
+          padding: 30px 30px 20px 30px;
+          background: #fff;
+          border-radius: 12px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.08);
+        }
+        input, button {
+          width: 100%; 
+          padding: 10px;
+          margin-bottom: 10px;
+          font-size: 16px;
+        }
+        #output {
+          background: #f9f9f9;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0 0 5px rgba(0,0,0,0.07);
+          margin-top: 20px;
+          font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+          font-size: 15px;
+          white-space: pre;
+          overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+<h2>Book Dependency Graph Generator</h2>
+
+<input id="bookTitle" placeholder="Book Title"><br><br>
+<input id="authorName" placeholder="Author Name"><br><br>
+<button onclick="generateTree()">Generate Graph</button>
+
+<h3>Generated Dependency Tree:</h3>
+<div id="output"></div>
+</div>
+
+<script>
+    function generateTree() {
+      const book_title = document.getElementById('bookTitle').value;
+      const author = document.getElementById('authorName').value;
+  
+      // Show a loading message while waiting
+      document.getElementById('output').innerHTML = '<p><em>Loading...</em></p>';
+  
+      axios.post('http://localhost:8002/generate_tree', { book_title, author })
+      .then(response => {
+          const tree = response.data.tree;
+          document.getElementById('output').textContent = tree;
+      })
+      .catch(error => {
+          let errorMessage = 'An error occurred while generating the tree.';
+          if (error.response && error.response.data && error.response.data.error) {
+              if (error.response.data.error.includes('insufficient_quota')) {
+                  errorMessage = 'The OpenAI API quota has been exceeded. Please try again later or contact the administrator.';
+              } else {
+                  errorMessage = error.response.data.error;
+              }
+          }
+          document.getElementById('output').innerHTML = '<p style="color:red;">' + errorMessage + '</p>';
+      });
+    }
+  </script>
+
+</body>
+</html>
