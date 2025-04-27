@@ -15,7 +15,7 @@ This project generates a dependency tree of intellectual influences for a given 
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/moonwalkwoods/dependency-nest.git
+   git clone https://github.com/moonwalkwoods/book-dependency-tree.git
    cd dependency-nest
    ```
 
